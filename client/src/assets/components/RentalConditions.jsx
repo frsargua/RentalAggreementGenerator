@@ -4,7 +4,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
 
-function RentalConditions() {
+function RentalConditions(props) {
+  const { updateRentalConditions, updateStartingDate, rentalConditions } =
+    props;
   const [value, setValue] = useState(null);
 
   return (
@@ -17,10 +19,8 @@ function RentalConditions() {
           <DatePicker
             label="Start date"
             disablePast
-            value={value}
-            onChange={(newValue) => {
-              setValue(newValue);
-            }}
+            value={rentalConditions.startingDate}
+            onChange={updateStartingDate}
             renderInput={(params) => (
               <TextField required margin="dense" {...params} />
             )}
@@ -28,11 +28,28 @@ function RentalConditions() {
         </LocalizationProvider>{" "}
         <TextField
           sx={{ mx: 1 }}
+          value={rentalConditions.duration}
+          name="duration"
           placeholder="Contract Length Date"
-          type="number"
+          type="text"
+          onChange={updateRentalConditions}
         />
-        <TextField sx={{ mx: 1 }} placeholder="amount" type="number" />
-        <TextField sx={{ mx: 1 }} placeholder="deposit" type="number" />
+        <TextField
+          sx={{ mx: 1 }}
+          value={rentalConditions.amount}
+          name="amount"
+          placeholder="amount"
+          type="text"
+          onChange={updateRentalConditions}
+        />
+        <TextField
+          sx={{ mx: 1 }}
+          name="deposit"
+          value={rentalConditions.deposit}
+          placeholder="deposit"
+          type="text"
+          onChange={updateRentalConditions}
+        />
       </Toolbar>
     </>
   );

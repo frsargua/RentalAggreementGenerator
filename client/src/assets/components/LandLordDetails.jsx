@@ -7,7 +7,13 @@ import { TextField, Toolbar, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
 
-function LandLordDetails() {
+function LandLordDetails(props) {
+  let {
+    index,
+    landlordsDetails,
+    updateLandlordsDetails,
+    updateLandlordsTitle,
+  } = props;
   let [age, setAge] = useState(0);
 
   const handleChange = (event) => {
@@ -19,7 +25,12 @@ function LandLordDetails() {
       <Toolbar>
         <FormControl sx={{ mx: 1, minWidth: 120 }}>
           <InputLabel>Title</InputLabel>
-          <Select value={age} label="Title" onChange={handleChange}>
+          <Select
+            value={landlordsDetails[index].title}
+            label="Title"
+            name="title"
+            onChange={(event) => updateLandlordsTitle(event, index)}
+          >
             <MenuItem value="">
               <em>-</em>
             </MenuItem>
@@ -27,10 +38,21 @@ function LandLordDetails() {
             <MenuItem value={"Doña"}>Doña</MenuItem>
           </Select>
         </FormControl>
-        <TextField sx={{ mx: 1 }} placeholder="Full Name" />
+        <TextField
+          sx={{ mx: 1 }}
+          value={landlordsDetails[index].fullName}
+          placeholder="Full Name"
+          name="fullName"
+          onChange={(event) => updateLandlordsTitle(event, index)}
+        />
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel>Document</InputLabel>
-          <Select value={age} label="ID document" onChange={handleChange}>
+          <Select
+            value={landlordsDetails[index].documentType}
+            label="ID document"
+            name="documentType"
+            onChange={(event) => updateLandlordsTitle(event, index)}
+          >
             <MenuItem value="">
               <em>-</em>
             </MenuItem>
@@ -39,7 +61,13 @@ function LandLordDetails() {
             <MenuItem value={"NIE"}>NIE</MenuItem>
           </Select>
         </FormControl>
-        <TextField sx={{ mx: 1 }} placeholder="NUMBER OF ID" />
+        <TextField
+          value={landlordsDetails[index].documentNumber}
+          name="documentNumber"
+          sx={{ mx: 1 }}
+          placeholder="NUMBER OF ID"
+          onChange={(event) => updateLandlordsTitle(event, index)}
+        />
       </Toolbar>
     </>
   );

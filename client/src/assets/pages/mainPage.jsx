@@ -7,6 +7,7 @@ import { Box } from "@mui/system";
 import { IconButton, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import dayjs from "dayjs";
 function MainPage() {
   const [numberOfLandLords, setNumberOfLandlords] = useState(0);
   const [numberOfTenants, setNumberOfTenants] = useState(0);
@@ -17,7 +18,7 @@ function MainPage() {
   });
 
   const [rentalConditions, setRentalConditions] = useState({
-    startingDate: "",
+    startingDate: dayjs().format("YYYY-MM-DD"),
     duration: "",
     amount: "",
     deposit: "",
@@ -44,10 +45,56 @@ function MainPage() {
     },
   });
 
+  function updateRentalConditions(event) {
+    const { name, value } = event.target;
+
+    setRentalConditions((prev) => {
+      return { ...prev, [name]: value };
+    });
+  }
+  function updateStartingDateInRentalConditions(input) {
+    setRentalConditions((prev) => {
+      return { ...prev, startingDate: input.format("YYYY-MM-DD") };
+    });
+  }
+  function updateLandlordsTitle(event, key) {
+    const { name, value } = event.target;
+
+    setLandlordsDetails((prev) => {
+      prev[key][name] = value;
+      return { ...prev };
+    });
+  }
+
+  function updateLandlordsDetails(event, key) {
+    const { name, value } = event.target;
+
+    setLandlordsDetails((prev) => {
+      prev[key][name] = value;
+      return { ...prev };
+    });
+  }
+
+  function updateTenantsDetails(event, key) {
+    const { name, value } = event.target;
+
+    setTenantsDetails((prev) => {
+      prev[key][name] = value;
+      return { ...prev };
+    });
+  }
+
   function updatePropertyDetails(event) {
     const { name, value } = event.target;
 
     setPropertyDetails((prev) => {
+      return { ...prev, [name]: value };
+    });
+  }
+  function updateRentalConditions(event) {
+    const { name, value } = event.target;
+
+    setRentalConditions((prev) => {
       return { ...prev, [name]: value };
     });
   }
@@ -76,17 +123,35 @@ function MainPage() {
   const landlordComponents = [];
   const tenantsComponents = [];
 
-  for (let i = 0; i < numberOfLandLords; i++) {
-    landlordComponents.push(<LandLordDetails />);
+  for (let i = 1; i <= numberOfLandLords; i++) {
+    landlordComponents.push(
+      <LandLordDetails
+        index={i}
+        landlordsDetails={landlordsDetails}
+        updateLandlordsDetails={updateLandlordsDetails}
+        updateLandlordsTitle={updateLandlordsTitle}
+      />
+    );
   }
 
-  for (let i = 0; i < numberOfTenants; i++) {
-    tenantsComponents.push(<TenantDetails />);
+  for (let i = 1; i <= numberOfTenants; i++) {
+    tenantsComponents.push(
+      <TenantDetails
+        index={i}
+        tenantsDetails={tenantsDetails}
+        updateTenantsDetails={updateTenantsDetails}
+      />
+    );
   }
 
   useEffect(() => {
-    console.log(propertyDetails);
-  }, [propertyDetails]);
+    console.log({
+      landlords: landlordsDetails,
+      property: propertyDetails,
+      tenants: tenantsDetails,
+      rentalCondition: rentalConditions,
+    });
+  }, [landlordsDetails, propertyDetails, tenantsDetails, rentalConditions]);
 
   return (
     <>
@@ -120,7 +185,11 @@ function MainPage() {
         {tenantsComponents}
       </Box>
 
-      <RentalConditions />
+      <RentalConditions
+        updateRentalConditions={updateRentalConditions}
+        rentalConditions={rentalConditions}
+        updateStartingDate={updateStartingDateInRentalConditions}
+      />
     </>
   );
 }

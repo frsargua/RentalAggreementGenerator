@@ -5,7 +5,8 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { TextField, Toolbar } from "@mui/material";
 
-export default function MainPage() {
+export default function TenantDetails(props) {
+  const { index, tenantsDetails, updateTenantsDetails } = props;
   const [age, setAge] = React.useState("");
 
   const handleChange = (event) => {
@@ -17,7 +18,12 @@ export default function MainPage() {
       <Toolbar>
         <FormControl sx={{ mx: 1, minWidth: 120 }}>
           <InputLabel>Title</InputLabel>
-          <Select value={age} label="Age" onChange={handleChange}>
+          <Select
+            value={tenantsDetails[index].title}
+            label="Age"
+            name="title"
+            onChange={(event) => updateTenantsDetails(event, index)}
+          >
             <MenuItem value="">
               <em>-</em>
             </MenuItem>
@@ -26,13 +32,27 @@ export default function MainPage() {
           </Select>
         </FormControl>
         <TextField
+          value={tenantsDetails[index].firstNames}
           sx={{ mx: 1, minWidth: 120 }}
           placeholder="Name and Middle Name"
+          name="firstNames"
+          onChange={(event) => updateTenantsDetails(event, index)}
         />
-        <TextField sx={{ mx: 1, minWidth: 120 }} placeholder="Surnames" />
+        <TextField
+          value={tenantsDetails[index].Surnames}
+          sx={{ mx: 1, minWidth: 120 }}
+          placeholder="Surnames"
+          name="Surnames"
+          onChange={(event) => updateTenantsDetails(event, index)}
+        />
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel>Document</InputLabel>
-          <Select value={age} label="ID document" onChange={handleChange}>
+          <Select
+            value={tenantsDetails[index].documentType}
+            label="ID document"
+            name="documentType"
+            onChange={(event) => updateTenantsDetails(event, index)}
+          >
             <MenuItem value="">
               <em>-</em>
             </MenuItem>
@@ -41,7 +61,13 @@ export default function MainPage() {
             <MenuItem value={"NIE"}>NIE</MenuItem>
           </Select>
         </FormControl>
-        <TextField sx={{ mx: 1 }} placeholder="NUMBER OF ID" />
+        <TextField
+          value={tenantsDetails[index].documentNumber}
+          sx={{ mx: 1 }}
+          placeholder="NUMBER OF ID"
+          name="documentNumber"
+          onChange={(event) => updateTenantsDetails(event, index)}
+        />
       </Toolbar>
     </>
   );
