@@ -14,19 +14,29 @@ function LandLordDetails(props) {
     updateLandlordsDetails,
     updateLandlordsTitle,
   } = props;
-  let [age, setAge] = useState(0);
-
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
 
   return (
     <>
       <Toolbar>
         <FormControl sx={{ mx: 1, minWidth: 120 }}>
+          <InputLabel>Genre</InputLabel>
+          <Select
+            value={landlordsDetails.genre}
+            label="Genre"
+            name="genre"
+            onChange={(event) => updateLandlordsTitle(event, index)}
+          >
+            <MenuItem value="">
+              <em>-</em>
+            </MenuItem>
+            <MenuItem value={"H"}>H</MenuItem>
+            <MenuItem value={"M"}>M</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl sx={{ mx: 1, minWidth: 120 }}>
           <InputLabel>Title</InputLabel>
           <Select
-            value={landlordsDetails[index].title}
+            value={landlordsDetails.title}
             label="Title"
             name="title"
             onChange={(event) => updateLandlordsTitle(event, index)}
@@ -40,7 +50,7 @@ function LandLordDetails(props) {
         </FormControl>
         <TextField
           sx={{ mx: 1 }}
-          value={landlordsDetails[index].fullName}
+          value={landlordsDetails.fullName}
           placeholder="Full Name"
           name="fullName"
           onChange={(event) => updateLandlordsTitle(event, index)}
@@ -48,7 +58,7 @@ function LandLordDetails(props) {
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel>Document</InputLabel>
           <Select
-            value={landlordsDetails[index].documentType}
+            value={landlordsDetails.documentType}
             label="ID document"
             name="documentType"
             onChange={(event) => updateLandlordsTitle(event, index)}
@@ -62,7 +72,7 @@ function LandLordDetails(props) {
           </Select>
         </FormControl>
         <TextField
-          value={landlordsDetails[index].documentNumber}
+          value={landlordsDetails.documentNumber}
           name="documentNumber"
           sx={{ mx: 1 }}
           placeholder="NUMBER OF ID"

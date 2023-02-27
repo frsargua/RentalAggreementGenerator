@@ -4,10 +4,12 @@ import LandLordDetails from "../components/LandLordDetails";
 import PropertyDetails from "../components/PropertyDetails";
 import { useEffect, useState } from "react";
 import { Box } from "@mui/system";
-import { IconButton, Typography } from "@mui/material";
+import { Button, IconButton, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import dayjs from "dayjs";
+import axios from "axios";
+
 function MainPage() {
   const [numberOfLandLords, setNumberOfLandlords] = useState(0);
   const [numberOfTenants, setNumberOfTenants] = useState(0);
@@ -24,26 +26,26 @@ function MainPage() {
     deposit: "",
   });
 
-  const [landlordsDetails, setLandlordsDetails] = useState({
-    1: { title: "", fullName: "", documentType: "", documentNumber: "" },
-    2: { title: "", fullName: "", documentType: "", documentNumber: "" },
-  });
-  const [tenantsDetails, setTenantsDetails] = useState({
-    1: {
-      title: "",
-      firstNames: "",
-      Surnames: "",
-      documentType: "",
-      documentNumber: "",
-    },
-    2: {
-      title: "",
-      firstNames: "",
-      Surnames: "",
-      documentType: "",
-      documentNumber: "",
-    },
-  });
+  let tenantDetailsStructure = {
+    title: "",
+    firstNames: "",
+    Surnames: "",
+    documentType: "",
+    documentNumber: "",
+    genre: "",
+  };
+
+  let landlordDetailsStructure = {
+    title: "",
+    fullName: "",
+    documentType: "",
+    documentNumber: "",
+    genre: "",
+  };
+
+  const [landlordsDetails, setLandlordsDetails] = useState([]);
+
+  const [tenantsDetails, setTenantsDetails] = useState([]);
 
   function updateRentalConditions(event) {
     const { name, value } = event.target;
@@ -62,16 +64,16 @@ function MainPage() {
 
     setLandlordsDetails((prev) => {
       prev[key][name] = value;
-      return { ...prev };
+      return [...prev];
     });
   }
 
   function updateLandlordsDetails(event, key) {
     const { name, value } = event.target;
-
+    console.log(event);
     setLandlordsDetails((prev) => {
       prev[key][name] = value;
-      return { ...prev };
+      return [...prev];
     });
   }
 
@@ -80,7 +82,7 @@ function MainPage() {
 
     setTenantsDetails((prev) => {
       prev[key][name] = value;
-      return { ...prev };
+      return [...prev];
     });
   }
 
@@ -101,95 +103,129 @@ function MainPage() {
 
   function increaseNumberOfTenants() {
     if (numberOfTenants < 2) {
+      tenantsDetails.push(tenantDetailsStructure);
       setNumberOfTenants((prev) => prev + 1);
     }
   }
   function decreaseNumberOfTenants() {
     if (numberOfTenants >= 0) {
+      tenantsDetails.pop();
       setNumberOfTenants((prev) => prev - 1);
     }
   }
   function increaseNumberOfLandlords() {
     if (numberOfLandLords < 2) {
+      landlordsDetails.push(landlordDetailsStructure);
       setNumberOfLandlords((prev) => prev + 1);
     }
   }
   function decreaseNumberOfLandlords() {
     if (numberOfLandLords >= 0) {
+      landlordsDetails.pop();
       setNumberOfLandlords((prev) => prev - 1);
     }
   }
 
-  const landlordComponents = [];
-  const tenantsComponents = [];
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:3002/document/create",
+        {
+          propertyDetails,
+          rentalConditions,
+          tenantsDetails,
+          landlordsDetails,
+        }
+      );
+      // const response = await fetch("http://localhost:3002/create-document", {
+      //   method: "POST",
+      //   mode: "cors",
+      //   body: JSON.stringify({
+      //     data: {
+      //       landlords: landlordsDetails,
+      //       property: propertyDetails,
+      //       tenants: tenantsDetails,
+      //       rentalCondition: rentalConditions,
+      //     },
+      //   }),
+      //   headers: { "Content-Type": "application/json" },
+      // });
 
-  for (let i = 1; i <= numberOfLandLords; i++) {
-    landlordComponents.push(
-      <LandLordDetails
-        index={i}
-        landlordsDetails={landlordsDetails}
-        updateLandlordsDetails={updateLandlordsDetails}
-        updateLandlordsTitle={updateLandlordsTitle}
-      />
-    );
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
   }
-
-  for (let i = 1; i <= numberOfTenants; i++) {
-    tenantsComponents.push(
-      <TenantDetails
-        index={i}
-        tenantsDetails={tenantsDetails}
-        updateTenantsDetails={updateTenantsDetails}
-      />
-    );
-  }
-
-  useEffect(() => {
-    console.log({
-      landlords: landlordsDetails,
-      property: propertyDetails,
-      tenants: tenantsDetails,
-      rentalCondition: rentalConditions,
-    });
-  }, [landlordsDetails, propertyDetails, tenantsDetails, rentalConditions]);
 
   return (
     <>
-      <PropertyDetails
-        updatePropertyDetails={updatePropertyDetails}
-        propertyDetails={propertyDetails}
-      />
-      <Box>
-        <Typography variant="h6" fontWeight={600}>
-          Property Owner/s Details
-        </Typography>
-        <IconButton onClick={increaseNumberOfLandlords}>
-          <AddIcon />
-        </IconButton>
-        <IconButton onClick={decreaseNumberOfLandlords}>
-          <RemoveIcon />
-        </IconButton>
-        {landlordComponents}
-      </Box>
+      <form onSubmit={handleSubmit}>
+        <PropertyDetails
+          updatePropertyDetails={updatePropertyDetails}
+          propertyDetails={propertyDetails}
+        />
+        <Box>
+          <Typography variant="h6" fontWeight={600}>
+            Property Owner/s Details
+          </Typography>
+          <IconButton onClick={increaseNumberOfLandlords}>
+            <AddIcon />
+          </IconButton>
+          <IconButton onClick={decreaseNumberOfLandlords}>
+            <RemoveIcon />
+          </IconButton>
 
-      <Box>
-        <Typography variant="h6" fontWeight={600}>
-          Tenant/s Details
-        </Typography>
-        <IconButton onClick={increaseNumberOfTenants}>
-          <AddIcon />
-        </IconButton>
-        <IconButton onClick={decreaseNumberOfTenants}>
-          <RemoveIcon />
-        </IconButton>
-        {tenantsComponents}
-      </Box>
+          {landlordsDetails.map((data, index) => (
+            <>
+              <LandLordDetails
+                key={index}
+                index={index}
+                landlordsDetails={data}
+                updateLandlordsDetails={updateLandlordsDetails}
+                updateLandlordsTitle={updateLandlordsTitle}
+              />
+            </>
+          ))}
+        </Box>
 
-      <RentalConditions
-        updateRentalConditions={updateRentalConditions}
-        rentalConditions={rentalConditions}
-        updateStartingDate={updateStartingDateInRentalConditions}
-      />
+        <Box>
+          <Typography variant="h6" fontWeight={600}>
+            Tenant/s Details
+          </Typography>
+          <IconButton onClick={increaseNumberOfTenants}>
+            <AddIcon />
+          </IconButton>
+          <IconButton onClick={decreaseNumberOfTenants}>
+            <RemoveIcon />
+          </IconButton>
+
+          {tenantsDetails.map((data, index) => (
+            <>
+              <TenantDetails
+                key={index}
+                index={index}
+                tenantsDetails={data}
+                updateTenantsDetails={updateTenantsDetails}
+              />
+            </>
+          ))}
+        </Box>
+
+        <RentalConditions
+          updateRentalConditions={updateRentalConditions}
+          rentalConditions={rentalConditions}
+          updateStartingDate={updateStartingDateInRentalConditions}
+        />
+        <Button
+          type="submit"
+          sx={{ marginTop: "2rem" }}
+          variant="contained"
+          color="success"
+        >
+          Get PDF
+        </Button>
+      </form>
     </>
   );
 }
