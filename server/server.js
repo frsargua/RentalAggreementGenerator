@@ -1,4 +1,5 @@
 const express = require("express");
+const conversor = require("conversor-numero-a-letras-es-ar");
 const Docxtemplater = require("docxtemplater");
 const JSZip = require("jszip");
 const dayjs = require("dayjs");
@@ -25,9 +26,19 @@ app.get("/create-document", (req, res) => {
     paragraphLoop: true,
     linebreaks: true,
   });
+
+  // Convert numbers to spanish words
+  let ClassConvertor = conversor.conversorNumerosALetras;
+  let convertor = new ClassConvertor();
+
+  var fecha = new Date(dayjs().format("YYYY-MM-DD"));
+  var options = { year: "numeric", month: "long", day: "numeric" };
+
+  console.log(fecha);
+
   // Define the data to be inserted into the document
   const data = {
-    currentDate: dayjs().format("YYYY-MM-DD"),
+    currentDate: fecha.toLocaleDateString("es-ES", options),
     landlord: "Don John Doe",
     documentType: "DNI",
     documentNumber: "77771777F",
@@ -36,11 +47,16 @@ app.get("/create-document", (req, res) => {
     DocumentNumberOne: "7333377F",
     tenantTwo: "Doña Juana Perez",
     DocumentTypeTwo: "DNI",
+    locality: "Vera(pueblo)",
     DocumentNumberTwo: "3233377F",
     propertyAddress: "this is a fake address",
     propertyDescription: "this is a fake description",
     amount: "500",
-    startingDate: dayjs().format("YYYY-MM-DD"),
+    amountWords: convertor.convertToText(500),
+    deposit: "500",
+    councilHouseReference: "010101010101",
+    depositWords: convertor.convertToText(516),
+    startingDate: fecha.toLocaleDateString("es-ES", options),
   };
 
   // Render the document with the new data
